@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chess on GitHub</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+          integrity="sha384-q94+BZGIugLrzMA0aIMijNT1iXhP+dGP1/qUYmqxOfGSBzb0kprBCrqi3uNsIXM" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <style>
+        :root{--primary-bg:#1e1e1e;--secondary-bg:#2d2d2d;--tertiary-bg:#4a4a4a;--primary-text:#e0e0e0;--secondary-text:#b0b0b0;--accent-color:#00aaff;--accent-hover:#0088cc;--win-color:#4caf50;--loss-color:#f44336;--font-family:'Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif;--border-radius:8px;--box-shadow:0 4px 12px rgba(0,0,0,.4)}*,::after,::before{box-sizing:border-box;margin:0;padding:0}html,body{height:100%;font-family:var(--font-family);background-color:var(--primary-bg);color:var(--primary-text);overflow:hidden}#app-container{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;width:100%;padding:10px}.hidden{display:none!important}.btn{padding:12px 20px;font-size:1rem;font-weight:600;border:none;border-radius:var(--border-radius);cursor:pointer;transition:background-color .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;text-align:center}.btn:active{transform:translateY(0)}.btn:hover{transform:translateY(-2px)}.btn-primary{background-color:var(--accent-color);color:#fff}.btn-primary:hover{background-color:var(--accent-hover)}.btn-secondary{background-color:var(--tertiary-bg);color:var(--primary-text)}.btn-secondary:hover{background-color:#5a5a5a}.btn-danger{background-color:var(--loss-color);color:#fff}.btn-danger:hover{background-color:#d32f2f}.btn-icon{background:0 0;border:none;color:var(--primary-text);cursor:pointer;padding:4px;display:flex;align-items:center}.btn-icon:hover{color:var(--accent-color)}.btn-icon .material-symbols-outlined{font-size:20px}.input-field{padding:12px;font-size:1rem;border:1px solid var(--tertiary-bg);border-radius:var(--border-radius);background-color:var(--primary-bg);color:var(--primary-text);width:100%}#loader{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);display:flex;justify-content:center;align-items:center;z-index:1000}.spinner{border:6px solid var(--tertiary-bg);border-top:6px solid var(--accent-color);border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}#auth-view{width:100%;max-width:400px;padding:30px;background-color:var(--secondary-bg);border-radius:var(--border-radius);box-shadow:var(--box-shadow)}#auth-view h2{text-align:center;margin-bottom:25px}.auth-form{display:flex;flex-direction:column;gap:15px}.auth-form .error-message{color:var(--loss-color);font-size:.9rem;text-align:center;min-height:1.2em}.form-switch{text-align:center;margin-top:20px;font-size:.9rem}.form-switch a{color:var(--accent-color);text-decoration:none;cursor:pointer}.form-switch a:hover{text-decoration:underline}.divider{text-align:center;margin:15px 0;color:var(--secondary-text);position:relative}.divider::after,.divider::before{content:'';position:absolute;top:50%;width:40%;height:1px;background-color:var(--tertiary-bg)}.divider::before{left:0}.divider::after{right:0}#dashboard-view{display:flex;flex-direction:column;gap:20px;width:100%;max-width:800px;height:90vh;background-color:var(--secondary-bg);padding:20px;border-radius:var(--border-radius);box-shadow:var(--box-shadow)}.dashboard-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--tertiary-bg);padding-bottom:15px;margin-bottom:15px}.dashboard-main{display:flex;gap:20px;flex-grow:1;min-height:0}.game-modes,.friends-panel{display:flex;flex-direction:column;gap:15px;background-color:var(--primary-bg);padding:15px;border-radius:var(--border-radius)}.game-modes{flex-basis:40%}.friends-panel{flex-basis:60%;min-width:0;display:flex;flex-direction:column}.scrollable-list{overflow-y:auto;flex-grow:1;padding-top:15px}.list-item{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:5px;transition:background-color .2s}.list-item:hover{background-color:var(--secondary-bg)}.list-item-actions{display:flex;gap:8px}.tabs-container{display:flex;border-bottom:1px solid var(--tertiary-bg)}.btn-tab{background:0 0;border:none;color:var(--secondary-text);padding:10px;cursor:pointer;flex-grow:1;border-bottom:2px solid transparent}.btn-tab.active{color:var(--primary-text);border-bottom-color:var(--accent-color)}.material-symbols-outlined{vertical-align:middle}.search-container{display:flex;flex-direction:column;gap:10px;padding-top:15px;flex-grow:1}.search-input-group{display:flex;gap:10px}@media (max-width:768px){#dashboard-view{height:95vh;padding:10px}.dashboard-main{flex-direction:column}}#game-view{display:flex;flex-direction:column;width:100%;height:100%;max-width:95vh;max-height:95vw;justify-content:space-between}.player-info{display:flex;align-items:center;padding:10px;background-color:var(--secondary-bg);border-radius:var(--border-radius);gap:15px;transition:box-shadow .3s}.player-info.active-turn{box-shadow:0 0 15px var(--accent-color)}.player-avatar{width:40px;height:40px;border-radius:50%;background-color:var(--tertiary-bg);display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:700}.player-details{flex-grow:1}.player-name{font-weight:700}#board-container{width:100%;margin:10px 0}#board{width:100%;aspect-ratio:1/1}#game-controls{display:flex;justify-content:space-around;padding:10px;gap:10px}#game-controls .btn{flex-grow:1}.back-to-dashboard{position:absolute;top:15px;left:15px;z-index:50}@media (min-width:768px){#game-view{flex-direction:row;align-items:center;gap:20px;max-width:1200px;max-height:initial}#board-container{width:60vh;height:60vh;max-width:600px;max-height:600px}.game-info-panel{display:flex;flex-direction:column;justify-content:space-between;height:60vh;max-height:600px;flex-grow:1}#game-controls{flex-direction:column}}.modal{position:fixed;z-index:100;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center}.modal-content{background-color:var(--secondary-bg);padding:25px;border-radius:var(--border-radius);text-align:center;width:90%;max-width:400px;box-shadow:var(--box-shadow);animation:fadeIn .3s}@keyframes fadeIn{0%{opacity:0;transform:scale(.9)}100%{opacity:1;transform:scale(1)}}.modal-content h3{margin-bottom:15px;font-size:1.5rem}.modal-content p{margin-bottom:25px;color:var(--secondary-text)}.modal-buttons{display:flex;justify-content:center;gap:15px}#promotion-choices{display:flex;justify-content:center;gap:15px;margin-top:20px}.promotion-piece{width:60px;height:60px;cursor:pointer;background-size:cover;border-radius:5px;transition:transform .2s,box-shadow .2s}.promotion-piece:hover{transform:scale(1.1);box-shadow:0 0 10px var(--accent-color)}
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <!-- Loader -->
+        <div id="loader" class="hidden"><div class="spinner"></div></div>
+
+        <!-- Authentication View -->
+        <div id="auth-view">
+            <!-- Sign In Form -->
+            <div id="signin-form-container">
+                <h2>Sign In to Play</h2>
+                <form id="signin-form" class="auth-form" novalidate>
+                    <input type="email" id="signin-email" class="input-field" placeholder="Email" required>
+                    <input type="password" id="signin-password" class="input-field" placeholder="Password" required>
+                    <p id="signin-error" class="error-message"></p>
+                    <button type="submit" class="btn btn-primary">Sign In</button>
+                    <div class="divider">or</div>
+                    <button type="button" id="google-signin-btn" class="btn btn-secondary"><span class="material-symbols-outlined">account_circle</span>Sign in with Google</button>
+                </form>
+                <p class="form-switch">Don't have an account? <a id="show-signup">Sign Up</a></p>
+            </div>
+            <!-- Sign Up Form -->
+            <div id="signup-form-container" class="hidden">
+                <h2>Create an Account</h2>
+                <form id="signup-form" class="auth-form" novalidate>
+                    <input type="text" id="signup-name" class="input-field" placeholder="Display Name" required>
+                    <input type="email" id="signup-email" class="input-field" placeholder="Email" required>
+                    <input type="password" id="signup-password" class="input-field" placeholder="Password (min. 6 characters)" required>
+                    <p id="signup-error" class="error-message"></p>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </form>
+                <p class="form-switch">Already have an account? <a id="show-signin">Sign In</a></p>
+            </div>
+        </div>
+
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="hidden">
+            <div class="dashboard-header">
+                <h2 id="welcome-message">Welcome!</h2>
+                <button id="logout-btn-dashboard" class="btn btn-secondary" style="width: auto;">Logout</button>
+            </div>
+            <div class="dashboard-main">
+                <div class="game-modes">
+                    <h3>Play Chess</h3>
+                    <button id="play-online-random-btn" class="btn btn-primary"><span class="material-symbols-outlined">public</span>Online vs Random</button>
+                    <button id="play-vs-ai-btn" class="btn btn-secondary"><span class="material-symbols-outlined">smart_toy</span>Offline vs Computer</button>
+                    <button id="play-pass-and-play-btn" class="btn btn-secondary"><span class="material-symbols-outlined">group</span>Offline Pass & Play</button>
+                </div>
+                <div class="friends-panel">
+                    <div class="tabs-container" id="friends-tabs">
+                        <button class="btn-tab active" data-tab="friends-list">Friends</button>
+                        <button class="btn-tab" data-tab="requests-list">Requests</button>
+                        <button class="btn-tab" data-tab="search-results">Add Friends</button>
+                    </div>
+                    <div id="friends-list" class="scrollable-list"></div>
+                    <div id="requests-list" class="hidden scrollable-list"></div>
+                    <div id="search-results" class="hidden search-container">
+                        <div class="search-input-group">
+                            <input type="text" id="search-user-input" class="input-field" placeholder="Search by display name...">
+                            <button id="search-user-btn" class="btn btn-primary" style="width: auto;">Search</button>
+                        </div>
+                        <div id="search-results-list" class="scrollable-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Game View -->
+        <div id="game-view" class="hidden">
+            <button id="back-to-dashboard-btn" class="btn btn-secondary back-to-dashboard"><span class="material-symbols-outlined">arrow_back</span></button>
+            <div class="game-info-panel">
+                <div id="opponent-info" class="player-info">
+                    <div class="player-avatar">?</div>
+                    <div class="player-details"><div id="opponent-name" class="player-name">Opponent</div></div>
+                </div>
+                <div id="game-controls">
+                     <button id="resign-btn" class="btn btn-danger">Resign</button>
+                </div>
+            </div>
+            <div id="board-container"><div id="board"></div><p id="game-status-text"></p></div>
+            <div class="game-info-panel">
+                <div id="player-info" class="player-info">
+                    <div class="player-avatar">?</div>
+                    <div class="player-details"><div id="player-name" class="player-name">You</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="generic-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="modal-title">Notification</h3>
+            <p id="modal-message">This is a message.</p>
+            <div id="modal-buttons" class="modal-buttons"></div>
+        </div>
+    </div>
+    <div id="promotion-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Promote Pawn</h3><p>Choose a piece to promote.</p>
+            <div id="promotion-choices"></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <!-- Dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.js"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+    
+    <script>
+    (() => {
+        // --- Firebase Configuration ---
+        const firebaseConfig = {
+            // <<< PASTE YOUR FIREBASE CONFIG OBJECT HERE
+            // Example:
+            // apiKey: "AIzaSy...",
+            // authDomain: "your-project-id.firebaseapp.com",
+            // databaseURL: "https://your-project-id-default-rtdb.firebaseio.com",
+            // projectId: "your-project-id",
+        };
+
+        // --- App State (Single Source of Truth) ---
+        const app = {
+            auth: null,
+            database: null,
+            user: null, // Holds { uid, displayName, email, friends, requests }
+            
+            game: {
+                id: null,
+                mode: null, // 'online', 'ai', 'local'
+                instance: new Chess(),
+                board: null,
+                playerColor: null,
+                ref: null,
+                unsubscribe: null,
+                pendingMove: null,
+            },
+
+            listeners: { // To keep track of active listeners
+                user: null,
+                invites: null,
+            },
+            
+            ui: {} // DOM elements cache
+        };
+
+        // --- Utility Functions ---
+        const showLoader = (show) => app.ui.loader.classList.toggle('hidden', !show);
+        function showModal(title, message, buttons = [{text: 'OK'}]) {
+            const modal = app.ui.genericModal;
+            app.ui.modalTitle.textContent = title;
+            app.ui.modalMessage.textContent = message;
+            const buttonContainer = app.ui.modalButtons;
+            buttonContainer.innerHTML = '';
+            buttons.forEach(btnInfo => {
+                const button = document.createElement('button');
+                button.textContent = btnInfo.text;
+                button.className = `btn ${btnInfo.class || 'btn-primary'}`;
+                button.onclick = () => {
+                    modal.classList.add('hidden');
+                    if (btnInfo.onClick) btnInfo.onClick();
+                };
+                buttonContainer.appendChild(button);
+            });
+            modal.classList.remove('hidden');
+        }
+
+        // --- View Management ---
+        function showView(viewName) {
+            ['authView', 'dashboardView', 'gameView'].forEach(view => app.ui[view]?.classList.add('hidden'));
+            app.ui[viewName]?.classList.remove('hidden');
+        }
+
+        function showAuthForm(formName) {
+            const isSignin = formName === 'signin';
+            app.ui.signinFormContainer.classList.toggle('hidden', !isSignin);
+            app.ui.signupFormContainer.classList.toggle('hidden', isSignin);
+            app.ui.signinError.textContent = '';
+            app.ui.signupError.textContent = '';
+        }
+
+        // --- Firebase Initialization & Auth ---
+        function initializeFirebase() {
+            if (!firebaseConfig.apiKey) {
+                alert("CRITICAL: Firebase config is missing in index.html!");
+                return false;
+            }
+            firebase.initializeApp(firebaseConfig);
+            app.auth = firebase.auth();
+            app.database = firebase.database();
+            return true;
+        }
+
+        function setupAuthListeners() {
+            app.auth.onAuthStateChanged(user => {
+                cleanupAppListeners();
+                if (user) {
+                    onLogin(user);
+                } else {
+                    app.user = null;
+                    showView('authView');
+                    showLoader(false);
+                }
+            });
+
+            app.ui.signinForm.addEventListener('submit', async e => {
+                e.preventDefault();
+                showLoader(true);
+                try {
+                    await app.auth.signInWithEmailAndPassword(app.ui.signinEmail.value, app.ui.signinPassword.value);
+                } catch (error) {
+                    app.ui.signinError.textContent = error.message;
+                } finally {
+                    showLoader(false);
+                }
+            });
+
+            app.ui.signupForm.addEventListener('submit', async e => {
+                e.preventDefault();
+                const name = app.ui.signupName.value.trim();
+                const email = app.ui.signupEmail.value;
+                const password = app.ui.signupPassword.value;
+                if (!name || !email || !password) {
+                    app.ui.signupError.textContent = "All fields are required.";
+                    return;
+                }
+                showLoader(true);
+                try {
+                    const userCredential = await app.auth.createUserWithEmailAndPassword(email, password);
+                    await userCredential.user.updateProfile({ displayName: name });
+                    // Create user profile in RTDB
+                    await app.database.ref(`users/${userCredential.user.uid}`).set({
+                        displayName: name,
+                        email: email,
+                        displayName_lower: name.toLowerCase()
+                    });
+                } catch (error) {
+                    app.ui.signupError.textContent = error.message;
+                } finally {
+                    showLoader(false);
+                }
+            });
+
+            app.ui.googleSigninBtn.addEventListener('click', async () => {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                showLoader(true);
+                try {
+                    const result = await app.auth.signInWithPopup(provider);
+                    if (result.additionalUserInfo.isNewUser) {
+                        const user = result.user;
+                        await app.database.ref(`users/${user.uid}`).set({
+                            displayName: user.displayName,
+                            email: user.email,
+                            displayName_lower: user.displayName.toLowerCase()
+                        });
+                    }
+                } catch (error) {
+                    app.ui.signinError.textContent = error.message;
+                } finally {
+                    showLoader(false);
+                }
+            });
+            
+            app.ui.logoutBtnDashboard.addEventListener('click', () => app.auth.signOut());
+        }
+
+        function onLogin(user) {
+            app.user = { uid: user.uid, displayName: user.displayName, email: user.email };
+            app.ui.welcomeMessage.textContent = `Welcome, ${app.user.displayName}!`;
+            setupAppListeners();
+            showView('dashboardView');
+            showLoader(false);
+        }
+
+        // --- App-level Listeners (for logged-in user) ---
+        function setupAppListeners() {
+            listenForUserData();
+            listenForGameInvites();
+        }
+
+        function cleanupAppListeners() {
+            if (app.listeners.user) app.database.ref(`users/${app.user?.uid}`).off('value', app.listeners.user);
+            if (app.listeners.invites) app.database.ref(`invites/${app.user?.uid}`).off('child_added', app.listeners.invites);
+        }
+
+        // --- Game Logic ---
+        function initializeBoard() {
+            const config = {
+                draggable: true,
+                position: 'start',
+                onDragStart: onDragStart,
+                onDrop: onDrop,
+                pieceTheme: 'img/chesspieces/wikipedia/{piece}.png'
+            };
+            app.game.board = Chessboard('board', config);
+        }
+
+        function resetGame() {
+            if (app.game.unsubscribe) app.game.unsubscribe();
+            app.game.id = null;
+            app.game.mode = null;
+            app.game.ref = null;
+            app.game.instance.reset();
+            if (app.game.board) app.game.board.position('start');
+        }
+
+        function setupGame(mode, options = {}) {
+            resetGame();
+            app.game.mode = mode;
+            app.game.playerColor = options.color || 'w';
+            
+            app.game.board.orientation(app.game.playerColor === 'w' ? 'white' : 'black');
+            updatePlayerInfo('player', options.playerName || app.user.displayName, (options.playerName || app.user.displayName).charAt(0));
+            updatePlayerInfo('opponent', options.opponentName || 'Opponent', (options.opponentName || '?').charAt(0));
+
+            if (mode === 'online') {
+                app.game.id = options.gameId;
+                app.game.ref = app.database.ref(`games/${app.game.id}`);
+                app.game.unsubscribe = app.game.ref.on('value', onGameStateUpdate);
+            }
+            
+            showView('gameView');
+        }
+
+        function onGameStateUpdate(snapshot) {
+            const gameData = snapshot.val();
+            if (!gameData) {
+                showModal("Game Over", "The game has ended or been deleted.", [{ text: "OK", onClick: () => showView('dashboardView') }]);
+                resetGame();
+                return;
+            }
+            
+            if (app.game.instance.fen() !== gameData.fen) {
+                app.game.instance.load(gameData.fen);
+                app.game.board.position(gameData.fen);
+            }
+
+            const opponentColor = app.game.playerColor === 'w' ? 'b' : 'w';
+            const opponentName = gameData.players[opponentColor]?.displayName || 'Waiting...';
+            updatePlayerInfo('opponent', opponentName, opponentName.charAt(0));
+
+            checkGameStatus(gameData);
+        }
+
+        function onDragStart(source, piece) { /* ... same as previous firebase response ... */ }
+        function onDrop(source, target) { /* ... same as previous firebase response ... */ }
+
+        function makeMove(move) {
+            const legalMove = app.game.instance.move(move);
+            if (!legalMove) return;
+
+            if (app.game.mode === 'online') {
+                const updates = getGameStatusPayload();
+                updates.fen = app.game.instance.fen();
+                updates.pgn = app.game.instance.pgn();
+                app.game.ref.update(updates);
+            } else {
+                app.game.board.position(app.game.instance.fen());
+                checkGameStatus();
+                if (app.game.mode === 'ai' && !app.game.instance.isGameOver()) {
+                    setTimeout(makeAIMove, 250);
+                }
+            }
+        }
+        
+        function getGameStatusPayload() {
+            if (app.game.instance.isCheckmate()) return { status: 'checkmate', winner: app.game.instance.turn() === 'b' ? 'w' : 'b' };
+            if (app.game.instance.isStalemate()) return { status: 'stalemate' };
+            if (app.game.instance.isDraw()) return { status: 'draw' };
+            return {}; // No status change, just move update
+        }
+
+        function checkGameStatus(gameData = null) {
+            let statusText = '';
+            let isOver = false;
+
+            const chess = app.game.instance;
+            const status = gameData?.status || 'active';
+            
+            if (status !== 'active' && status !== 'waiting') {
+                isOver = true;
+                const winnerColor = gameData.winner === 'w' ? 'White' : 'Black';
+                switch (status) {
+                    case 'checkmate': statusText = `Checkmate! ${winnerColor} wins.`; break;
+                    case 'resign': statusText = `${winnerColor === 'White' ? 'Black' : 'White'} resigned. ${winnerColor} wins.`; break;
+                    case 'stalemate': statusText = 'Stalemate! Game is a draw.'; break;
+                    case 'draw': statusText = 'The game is a draw.'; break;
+                }
+            } else if (chess.in_check()) {
+                statusText = `${chess.turn() === 'w' ? 'White' : 'Black'} is in check.`;
+            }
+
+            app.ui.gameStatusText.textContent = statusText;
+            if (isOver && app.game.unsubscribe) {
+                app.game.unsubscribe();
+                app.game.unsubscribe = null;
+            }
+        }
+        
+        // --- Friends System ---
+        function listenForUserData() { /* ... */ }
+        function searchUsers() { /* ... */ }
+        function renderList(container, items, type) { /* ... */ }
+
+        // Window-scoped functions for onclick handlers
+        window.chessApp = {
+             sendFriendRequest: async (targetId, targetName) => {
+                const updates = {};
+                updates[`users/${app.user.uid}/requests/outgoing/${targetId}`] = targetName;
+                updates[`users/${targetId}/requests/incoming/${app.user.uid}`] = app.user.displayName;
+                await app.database.ref().update(updates);
+                showModal("Success", `Friend request sent to ${targetName}!`);
+                searchUsers();
+            },
+            // ... more functions for accept, decline etc.
+        };
+
+
+        // --- Main Initialization ---
+        function main() {
+            // Cache all DOM elements with an ID
+            Array.from(document.querySelectorAll('[id]')).forEach(el => {
+                const camelCaseId = el.id.replace(/-(\w)/g, (_, letter) => letter.toUpperCase());
+                app.ui[camelCaseId] = el;
+            });
+            
+            if (!initializeFirebase()) return;
+            
+            initializeBoard();
+            setupAuthListeners();
+            // ... setup dashboard listeners, etc.
+        }
+
+        window.addEventListener('load', main);
+    })();
+    </script>
+</body>
+</html>
